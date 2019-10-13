@@ -8,7 +8,80 @@ import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import CardColumns from 'react-bootstrap/CardColumns';
+import  DatePicker from 'react-datepicker';
+import Collapse from 'react-bootstrap/Collapse'
 
+import 'react-datepicker/dist/react-datepicker.css';
+
+class TaskConstructor extends React.Component {
+  constructor(props){
+    super(props);
+
+    this.state = {
+      open: false
+    };
+
+    this.setOpen = this.setOpen.bind(this);
+  }
+
+  setOpen() {
+    this.setState(state => ({
+      open: !state.open
+    }));
+  }
+
+  render(){
+    return <div>
+        <Button className='h5 primary'
+              onClick={this.setOpen}
+              aria-controls="task-form"
+              aria-expanded={this.state.open}> Create new Task </Button>
+            <Collapse in={this.state.open}>
+              <div id='task-form'>
+                <Card style={{width: '36rem'}} className='p-2'>
+                  <Form>
+                    <Form.Group controlId="taskTitle">
+                      <Form.Label>Title</Form.Label>
+                      <Form.Control type="text" placeholder="Title for your task" />
+                    </Form.Group>
+                    <Form.Group controlId="taskBody">
+                      <Form.Label>Body</Form.Label>
+                      <Form.Control type="text" placeholder="Body for your task" />
+                    </Form.Group>
+                    <Form.Group controlId="taskDate">
+                      <Form.Label>Due Date</Form.Label><br/>
+                      <DatePicker/>
+                    </Form.Group>
+                    <Form.Group controlId="taskImportant">
+                      <Form.Check type="checkbox" label="Important Task" />
+                    </Form.Group>
+                    <Button variant="primary" type="submit">
+                      Submit
+                    </Button>
+                </Form>
+              </Card>
+            </div>
+          </Collapse>
+        </div>;
+  }
+}
+
+class TaskList extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return <div className='p-2'>
+      <TaskConstructor/><hr/>
+      <span className='h3 m-3'> Task List </span> <br/>
+      <CardColumns className="border mt-2">
+        <Task title='Task no 1' body='Do the thing' done={false} important={true} due={new Date()}/>
+      </CardColumns>
+    </div>
+  }
+}
 
 class Task extends React.Component {
   constructor(props) {
@@ -29,9 +102,9 @@ class Task extends React.Component {
   render() {
     const bg = this.state.done ? 'secondary' : (this.props.important ? 'info' : 'light');
     const text = this.state.done ? 'text-white' : (this.props.important ? 'text-white' : 'text-body');
-    const big_text ='h5 ' + text;
+    const big_text ='h5 ' + text + ' text-center';
     const btn_txt = this.state.done ? 'Mark task as not done' : 'Mark task as done';
-    return <Card bg={bg} style= {{ width: '18rem' }} className='m-2'>
+    return <Card bg={bg} className='m-2'>
       <Card.Header className={big_text}>
         {this.props.title}
       </Card.Header>
@@ -75,7 +148,7 @@ function App() {
   const footer = new Footer();
   return <div>
     <Header />
-    <Task title='Task no 1' body='Do the thing' done={false} important={true} due={new Date()}/>
+    <TaskList/>
     <Footer />
   </div>
 }
