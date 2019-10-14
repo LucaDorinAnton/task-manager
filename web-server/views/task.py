@@ -35,11 +35,11 @@ def routes(app):
             t = Task.add(dct)
             return jsonify(t.to_dict()), 200
         except Exception as e:
-            return jsonify({'e' : e.__str__()'), 500
+            return jsonify({'e' : e.__str__()}), 500
 
 
     @app.route('/task/<token>', methods=['GET'])
-    def get(token):
+    def get_task(token):
         try:
             t = Task.get(token)
             return jsonify(t.to_dict()), 200
@@ -49,17 +49,17 @@ def routes(app):
             }), 500
 
     @app.route('/task/<token>/toggle', methods=['PUT'])
-    def toggle(token):
+    def toggle_task(token):
         try:
             response = Task.toggle_done(token)
-            return rasponse, 200
+            return response, 200
         except Exception as e:
             return jsonify({
                 'e': e.__str__()
             }), 500
 
     @app.route('/task/<token>', methods=['DELETE'])
-    def delete(token):
+    def delete_task(token):
         try:
             response = Task.delete(token)
             return response, 200

@@ -1,10 +1,10 @@
 from app import db
-from models import Person
+from models.person import Person
 from secrets import token_urlsafe
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    owner_id = db.Column(db.String(64), db.ForeignKey('person.id'), nullable=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False)
     due = db.Column(db.DateTime, nullable=False)
     title = db.Column(db.String(), nullable=False)
     body = db.Column(db.String(), nullable=False)
@@ -47,7 +47,7 @@ class Task(db.Model):
                 body= task_dict['body'],
                 important= task_dict['important'],
                 done= task_dict['done'],
-                token=token_urlsafe(64)
+                token=token_urlsafe(32)
                 )
         except:
             raise Exception('Problem in request dict')

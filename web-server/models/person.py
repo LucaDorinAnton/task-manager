@@ -20,9 +20,9 @@ class Person(db.Model):
     def add(_username, passwd):
         if Person.query.filter_by(username=_username).first():
             raise Exception('Person already exists!')
-        p = Person(username=_username, password=generate_password_hash(password))
+        p = Person(username=_username, password=generate_password_hash(passwd))
         db.session.add(p)
-        db.session.commit(p)
+        db.session.commit()
         return 'Person added'
 
     def login(_username, passwd):
@@ -31,7 +31,7 @@ class Person(db.Model):
             raise Exception('Person does not exist!')
         if not check_password_hash(p.password, passwd):
             raise Exception('Wrong Password!')
-        t = token_urlsafe(64)
+        t = token_urlsafe(32)
         p.token = t
         db.session.add(p)
         db.session.commit()
@@ -41,13 +41,15 @@ class Person(db.Model):
         p = Person.query.filter_by(token=_token).first()
         if not p:
             raise Exception('Person does not exist')
-        else return p
+        else:
+            return p
 
     def get_id(_id):
         p = Person.query.filter_by(id=_id).first()
         if not p:
             raise Exception('Person does not exist')
-        else return p
+        else:
+            return p
 
     def delete(_token):
         p = Person.query.filter_by(token=_token).first()

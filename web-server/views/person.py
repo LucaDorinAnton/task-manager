@@ -48,7 +48,7 @@ def routes(app):
             }), 500
 
     @app.route('/person/<token>', methods=['GET'])
-    def get(token):
+    def get_person(token):
         try:
             p = Person.get(token)
             return jsonify(p.to_dict())
@@ -58,7 +58,7 @@ def routes(app):
             }), 500
 
     @app.route('/person/<token>', methods=['DELETE'])
-    def delete(token):
+    def delete_person(token):
         try:
             response = Person.delete(token)
             return jsonify(response)
