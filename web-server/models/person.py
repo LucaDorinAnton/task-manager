@@ -51,6 +51,9 @@ class Person(db.Model):
         else:
             return p
 
+    def get_all():
+        return list(Person.query.all())
+
     def delete(_token):
         p = Person.query.filter_by(token=_token).first()
         if not p:

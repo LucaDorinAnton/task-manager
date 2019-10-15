@@ -1,13 +1,11 @@
 import React from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 import CardColumns from 'react-bootstrap/CardColumns';
 import Collapse from 'react-bootstrap/Collapse';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Form from 'react-bootstrap/Form';
-import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import dateformat from 'dateformat';
@@ -18,6 +16,8 @@ import Col from 'react-bootstrap/Col';
 
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
+
+import Table from 'react-bootstrap/Table'
 
 const base_url = "http://localhost:5000";
 
@@ -88,6 +88,7 @@ class MainPage extends React.Component {
 
     return <>
     <Header
+      page={this.state.page}
       pageChange={this.pageChange}
       showButton={showButton}
       setOpen={this.setOpen}
@@ -140,7 +141,7 @@ class ProfilePage extends React.Component {
         <Col sm='12' md={{ span: 10, offset: 1 }} className='pt-5 mt-5 align-self-center'>
       <Card style={{width: "28 rem"}}>
       <Card.Body>
-          <Card.Title> {this.state.username}'s profile </Card.Title>
+          <Card.Title> Profile of: {this.state.username} </Card.Title>
           <Card.Text> See how you have been doing on the task manager.</Card.Text>
       </Card.Body>
         <ListGroup className="list-group-flush">
@@ -156,14 +157,52 @@ class ProfilePage extends React.Component {
 }
 
 class LeaderboardPage extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      leaderboard: []
+    };
+
+    this.update = this.update.bind(this);
+
+    this.update();
+  }
+
+  update() {
+    fetch(base_url + '/leaderboard').then(resp => resp.json()).then(json => {
+      if(typeof json.e != 'undefined') {
+        console.log('Problem here: ' + JSON.stringify(json));
+      } else {
+        this.setState(json);
+      }
+    });
+  }
 
   render() {
-    return <span>I am a Leaderboard page!</span>;
+    const lb = this.state.leaderboard.map((item) =>
+      <tr key={item.user}><td>{item.place}</td><td>{item.user}</td><td>{item.tasks}</td></tr>
+    );
+
+    return <Container>
+      <Row>
+        <Col sm='12' md={{ span: 10, offset: 1 }} className='pt-5 mt-5 align-self-center'>
+          <Table striped bordered hover>
+            <thead>
+            <tr>
+              <th>#</th>
+              <th>Username</th>
+              <th>No. of tasks Completed</th>
+            </tr>
+          </thead>
+          <tbody>
+            {lb}
+          </tbody>
+          </Table>
+      </Col>
+    </Row>
+  </Container>;
   }
-}
-
-class TaskCollapseButton extends React.Component {
-
 }
 
 class TaskConstructor extends React.Component {
@@ -271,7 +310,6 @@ class TaskList extends React.Component {
   }
 
   getTasks() {
-    console.log('Getting tasks!');
     fetch(base_url + '/person/' + this.props.p_token + '/tasks').then(resp => resp.json()).then(json => {
       this.setState({
         tasks: json.tasks
@@ -347,7 +385,7 @@ class Task extends React.Component {
       </Card.Header>
       <Card.Body>
         <Card.Text className={text}>
-          <span>{this.props.body} </span><hr/>
+          <span>{this.props.body} </span><br/>
           <span> Due Date: {due}</span>
         </Card.Text>
         <Button variant="primary" onClick={this.updateTask}>{btn_txt}</Button>
@@ -360,12 +398,6 @@ class Task extends React.Component {
 class Header extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      t: true,
-      p: false,
-      l: false,
-    };
 
     this.handleTaskClick = this.handleTaskClick.bind(this);
     this.handleProfileClick = this.handleProfileClick.bind(this);
@@ -390,9 +422,9 @@ class Header extends React.Component {
                   aria-controls="task-form"
                   aria-expanded={this.props.open}> Create new Task </Button> : null;
 
-    const t_selected = this.state.t ? "text-white h5 border-bottom border-white" : "text-white h5";
-    const p_selected = this.state.p ? "text-white h5 border-bottom border-white" : "text-white h5";
-    const l_selected = this.state.l ? "text-white h5 border-bottom border-white" : "text-white h5";
+    const t_selected = this.props.page === 'task' ? "text-white h5 border-bottom border-white" : "text-white h5";
+    const p_selected = this.props.page === 'profile' ? "text-white h5 border-bottom border-white" : "text-white h5";
+    const l_selected = this.props.page === 'leader' ? "text-white h5 border-bottom border-white" : "text-white h5";
 
   return  <Navbar bg="dark" expand="lg" sticky='top'>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />

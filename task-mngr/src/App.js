@@ -1,18 +1,6 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
-import NavDropdown from 'react-bootstrap/NavDropdown';
-import CardColumns from 'react-bootstrap/CardColumns';
-import Collapse from 'react-bootstrap/Collapse';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import Form from 'react-bootstrap/Form';
-import FormControl from 'react-bootstrap/FormControl';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
-
 
 import FrontPage from './FrontPage.js';
 import MainPage from './MainPage.js';
@@ -102,7 +90,6 @@ class TopLevelController extends React.Component {
       if(typeof json.e != "undefined") {
         this.setState({signup_f_toast: true});
       } else {
-        console.log(json);
         this.setState({
           signup_t_toast: true,
           p_token: json.token
