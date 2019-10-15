@@ -2,6 +2,10 @@ html, body, #app, #app>div, #root {
   height: 100%
 }
 
+.nav-link:hover {
+  text-decoration: overline;
+}
+
 
 body {
   margin: 0;

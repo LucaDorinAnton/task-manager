@@ -12,7 +12,7 @@ def routes(app):
                 'due' : str(YYYY-MM-DD),
                 'title': str,
                 'body': str,
-                'important': str(true/false),
+                'important': bool(True/False),
             }
         """
         try:
@@ -22,7 +22,8 @@ def routes(app):
             due =  dt.strptime(_request['due'], '%Y-%m-%d')
             title = _request['title']
             body = _request['body']
-            important = True if _request['important'] == 'true' else False
+            important = bool( _request['important'])
+            print(important)
             done = False
             dct = {
                 'owner_token': token,
@@ -52,7 +53,7 @@ def routes(app):
     def toggle_task(token):
         try:
             response = Task.toggle_done(token)
-            return response, 200
+            return jsonify(response), 200
         except Exception as e:
             return jsonify({
                 'e': e.__str__()
@@ -62,7 +63,7 @@ def routes(app):
     def delete_task(token):
         try:
             response = Task.delete(token)
-            return response, 200
+            return jsonify(response), 200
         except Exception as e:
             return jsonify({
                 'e': e.__str__()
@@ -74,3 +75,36 @@ def routes(app):
             return jsonify({'tasks': Task.get_all(token)}), 200
         except Exception as e:
             return jsonify({'e': e.__str__()}), 500
+
+
+    @app.route('/person/<token>/profile', methods=['GET'])
+    def get_person_profile(token):
+        try:
+            p = Person.get(token)
+            tasks = Task.get_all(token)
+            cnt_tasks = len(tasks)
+            imp_tasks = 0
+            done_tasks = 0
+            for t in tasks:
+                if t['done']:
+                    done_tasks += 1
+                if t['important']:
+                    imp_tasks += 1
+            imp_p = 0
+            done_p = 0
+            if cnt_tasks != 0:
+                imp_p = imp_tasks / cnt_tasks
+                done_p = done_tasks / cnt_tasks
+            res = {
+                'tasks': cnt_tasks,
+                'imp_tasks': imp_tasks,
+                'done_tasks' : done_tasks,
+                'imp_p': imp_p,
+                'done_p': done_p,
+                'user': p.username
+            }
+            return jsonify(res), 200
+        except Exception as e:
+            return jsonify({
+                'e': e.__str__()
+            }), 500
