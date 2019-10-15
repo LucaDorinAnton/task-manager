@@ -16,7 +16,7 @@ def routes(app):
             }
         """
         try:
-            _request = request.get_json()
+            _request = request.get_json(force=True)
             if not _request:
                 abort(400)
             due =  dt.strptime(_request['due'], '%Y-%m-%d')
@@ -67,3 +67,10 @@ def routes(app):
             return jsonify({
                 'e': e.__str__()
             }), 500
+
+    @app.route('/person/<token>/tasks', methods=['GET'])
+    def get_person_tasks(token):
+        try:
+            return jsonify({'tasks': Task.get_all(token)}), 200
+        except Exception as e:
+            return jsonify({'e': e.__str__()}), 500

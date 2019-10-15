@@ -13,13 +13,14 @@ def routes(app):
             }
         """
         try:
-            _request = request.get_json()
+            _request = request.get_json(force=True)
+            print(type(_request))
             if not _request:
                 abort(400)
-            response = Person.add(
-                _request['username'],
-                _request['password'])
-            return jsonify(response)
+            p = Person.add(
+                str(_request['username']),
+                str(_request['password']))
+            return jsonify(p.to_dict())
         except Exception as e:
             return jsonify({
                 'e': e.__str__()
@@ -35,12 +36,12 @@ def routes(app):
             }
         """
         try:
-            _request = request.get_json()
+            _request = request.get_json(force=True)
             if not _request:
                 abort(400)
             response = Person.login(
-                            _request['username'],
-                            _request['password'])
+                            str(_request['username']),
+                            str(_request['password']))
             return jsonify(response.to_dict())
         except Exception as e:
             return jsonify({

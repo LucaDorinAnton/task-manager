@@ -72,6 +72,16 @@ class Task(db.Model):
             db.session.commit()
             return 'Done update successful'
 
+    def get_all(_token):
+        p = Person.get(_token)
+        if not p:
+            raise Exception('Owner does not exist!')
+        tasks = list(Task.query.filter_by(owner_id=p.id))
+        res = []
+        for t in tasks:
+            res.append(t.to_dict())
+        return res
+
     def delete(_token):
         t = Task.query.filter_by(token=_token).first()
         if not t:

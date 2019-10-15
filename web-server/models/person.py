@@ -20,10 +20,10 @@ class Person(db.Model):
     def add(_username, passwd):
         if Person.query.filter_by(username=_username).first():
             raise Exception('Person already exists!')
-        p = Person(username=_username, password=generate_password_hash(passwd))
+        p = Person(username=_username, password=generate_password_hash(passwd), token=token_urlsafe(32))
         db.session.add(p)
         db.session.commit()
-        return 'Person added'
+        return p
 
     def login(_username, passwd):
         p = Person.query.filter_by(username=_username).first()

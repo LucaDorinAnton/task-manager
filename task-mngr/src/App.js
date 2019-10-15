@@ -4,129 +4,130 @@ import './App.css';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
+import CardColumns from 'react-bootstrap/CardColumns';
+import Collapse from 'react-bootstrap/Collapse';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-import CardColumns from 'react-bootstrap/CardColumns';
-import DatePicker from 'react-datepicker';
-import Collapse from 'react-bootstrap/Collapse';
-import Accordion from 'react-bootstrap/Accordion';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-
-import 'react-datepicker/dist/react-datepicker.css';
 
 
-class SignUp extends React.Component {
-  constructor(props){
-    super(props);
-  }
+import FrontPage from './FrontPage.js'
 
-  render(){
-    return <Form>
-      <Form.Group controlId="signUpUser">
-        <Form.Label>Username</Form.Label>
-        <Form.Control type="text" placeholder="Your desired username" />
-      </Form.Group>
+const base_url = "http://localhost:5000";
 
-      <Form.Group controlId="signUpPasswd">
-        <Form.Label>Password</Form.Label>
-        <Form.Control type="password" placeholder="Your password here" />
-      </Form.Group>
-
-      <Form.Group controlId="signUpRepeat">
-        <Form.Label>Repeat password</Form.Label>
-        <Form.Control type="password" placeholder="Your password here again" />
-      </Form.Group>
-      <Button variant="primary" type="submit">
-        Create your account
-      </Button>
-    </Form>;
-  }
+function post_json(url, data) {
+    return fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    mode: 'cors',
+    headers: {
+      'Content-Type': 'application/json'
+      }
+    });
 }
 
-class LogIn extends React.Component {
-  // constructor(props){
-  //   super(props);
-  // }
-
-  render() {
-    return <Form>
-      <Form.Group controlId="loginUser">
-        <Form.Label>Username</Form.Label>
-        <Form.Control type="text" placeholder="Enter username" />
-      </Form.Group>
-
-      <Form.Group controlId="loginPasswd">
-        <Form.Label>Password</Form.Label>
-        <Form.Control type="password" placeholder="Password" />
-      </Form.Group>
-      <Button variant="primary" type="submit">
-        Log in
-      </Button>
-    </Form>;
-  }
-}
-
-class FrontPage extends React.Component {
+class TopLevelController extends React.Component {
   constructor(props){
     super(props);
 
     this.state = {
-      logIn: false
+      p_token: "",
+      login_f_toast: false,
+      login_t_toast: false,
+      signup_f_toast: false,
+      signup_t_toast: false,
+      loggedIn: false
     };
 
-    this.toggleDisplay = this.toggleDisplay.bind(this);
+    this.toggle_login_f_toast = this.toggle_login_f_toast.bind(this);
+    this.toggle_login_t_toast = this.toggle_login_t_toast.bind(this);
+    this.toggle_signup_f_toast = this.toggle_signup_f_toast.bind(this);
+    this.toggle_signup_t_toast = this.toggle_signup_t_toast.bind(this);
+    this.signUp = this.signUp.bind(this);
+    this.logIn = this.logIn.bind(this);
   }
 
-  toggleDisplay(){
-    this.setState(state => ({
-      logIn: !state.logIn
-    }));
+  toggle_login_f_toast() {
+    this.setState({
+      login_f_toast: false
+    });
   }
 
-  render(){
-    const btnText = this.state.logIn ? 'Sign Up' : 'Log In';
-    const logIn = new LogIn();
-    const singUp = new SignUp();
-    return <Container className='h-100'>
-      <Row className='h-100'>
-        <Col sm='12' md={{ span: 6, offset: 3 }} className='align-self-center'>
-        <span className="h3 font-weight-bold"> Welcome to the Task Manager.</span>
-        <Accordion defaultActiveKey="0" className='m-3'>
-          <Card>
-            <Card.Header>
-              <Accordion.Toggle as={Card.Header} eventKey="0">
-                Log In
-              </Accordion.Toggle>
-            </Card.Header>
-            <Accordion.Collapse eventKey="0">
-              <Card.Body>
-                <LogIn/>
-              </Card.Body>
-            </Accordion.Collapse>
-          </Card>
-          <Card>
-            <Card.Header>
-              <Accordion.Toggle as={Card.Header} eventKey="1">
-                Sign Up
-              </Accordion.Toggle>
-            </Card.Header>
-            <Accordion.Collapse eventKey="1">
-              <Card.Body>
-                <SignUp/>
-              </Card.Body>
-            </Accordion.Collapse>
-          </Card>
-        </Accordion>
-        </Col>
-        </Row>
-    </Container>;
+  toggle_login_t_toast() {
+    this.setState({
+      login_t_toast: false,
+      loggedIn: true
+    });
+
+  }
+
+  toggle_signup_f_toast() {
+    this.setState({
+      signup_f_toast: false
+    });
+  }
+
+  toggle_signup_t_toast() {
+    this.setState({
+      signup_t_toast: false,
+      loggedIn: true
+    });
+  }
+
+  logIn(data) {
+    const url = base_url + "/login";
+    post_json(url, data).then(resp => resp.json()).then(json => {
+      if(typeof json.e != "undefined") {
+        this.setState({login_f_toast: true});
+      } else {
+        this.setState({
+          login_t_toast: true,
+          p_token: json.token});
+      }
+    });
+  }
+
+  signUp(user, pass) {
+    const data = {
+      username: user,
+      password: pass
+    };
+    const url = base_url + "/signup";
+    post_json(url, data).then(resp => resp.json()).then(json => {
+      if(typeof json.e != "undefined") {
+        this.setState({signup_f_toast: true});
+      } else {
+        console.log(json);
+        this.setState({
+          signup_t_toast: true,
+          p_token: json.token
+        });
+      }
+    });
+  }
+
+  render() {
+
+    const mainPanel= !this.state.loggedIn ? <FrontPage
+      logIn={this.logIn}
+      signUp={this.signUp}
+      show_login_f_toast={this.state.login_f_toast}
+      show_login_t_toast={this.state.login_t_toast}
+      show_signup_f_toast={this.state.signup_f_toast}
+      show_signup_t_toast={this.state.signup_t_toast}
+      toggle_login_f_toast={this.toggle_login_f_toast}
+      toggle_login_t_toast={this.toggle_login_t_toast}
+      toggle_signup_f_toast={this.toggle_signup_f_toast}
+      toggle_signup_t_toast={this.toggle_signup_t_toast}/> : <TaskList />;
+  return <>
+    {mainPanel}
+    <Footer />
+  </>;
   }
 }
-
 
 class TaskConstructor extends React.Component {
   constructor(props){
@@ -258,17 +259,7 @@ class Footer extends React.Component {
 }
 
 function App() {
-  const header = new Header();
-  const footer = new Footer();
-  // return <div>
-  //   <Header />
-  //   <TaskList/>
-  //   <Footer />
-  // </div>;
-  return <>
-    <FrontPage/>
-    <Footer/>
-  </>;
+  return <TopLevelController />;
 }
 
 export default App;
