@@ -24,6 +24,7 @@ class TopLevelController extends React.Component {
 
     this.state = {
       p_token: "",
+      user: "",
       login_f_toast: false,
       login_t_toast: false,
       signup_f_toast: false,
@@ -75,7 +76,8 @@ class TopLevelController extends React.Component {
       } else {
         this.setState({
           login_t_toast: true,
-          p_token: json.token});
+          p_token: json.token,
+          user: json.username});
       }
     });
   }
@@ -119,6 +121,7 @@ class TopLevelController extends React.Component {
       toggle_signup_f_toast={this.toggle_signup_f_toast}
       toggle_signup_t_toast={this.toggle_signup_t_toast}/> : <MainPage
         p_token={this.state.p_token}
+        user={this.state.user}
         logout={this.logout}
        />;
   return <>

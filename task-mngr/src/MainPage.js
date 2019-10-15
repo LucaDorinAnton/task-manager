@@ -94,6 +94,7 @@ class MainPage extends React.Component {
       setOpen={this.setOpen}
       open={this.state.open}
       logout={this.props.logout}
+      user={this.props.user}
      />
     {page}
     </>;
@@ -149,6 +150,9 @@ class ProfilePage extends React.Component {
           <ListGroupItem>No. of important tasks: <strong>{this.state.noImpTasks} ({Number((this.state.impTasksP * 100).toFixed(2))}%)</strong></ListGroupItem>
           <ListGroupItem>No of completed tasks: <strong>{this.state.noComplTasks} ({Number((this.state.complTasksP * 100).toFixed(2))}%)</strong></ListGroupItem>
         </ListGroup>
+        <Card.Body>
+          <Button variant="primary" onClick={this.getProfile}>Refresh profile</Button>
+        </Card.Body>
       </Card>
       </Col>
     </Row>
@@ -187,6 +191,7 @@ class LeaderboardPage extends React.Component {
     return <Container>
       <Row>
         <Col sm='12' md={{ span: 10, offset: 1 }} className='pt-5 mt-5 align-self-center'>
+          <h3>Leaderboard</h3>
           <Table striped bordered hover>
             <thead>
             <tr>
@@ -200,6 +205,11 @@ class LeaderboardPage extends React.Component {
           </tbody>
           </Table>
       </Col>
+    </Row>
+    <Row>
+        <Col sm='12' md={{ span: 10, offset: 1 }} className='pt-5 mt-5 align-self-center'>
+          <Button variant="primary" onClick={this.update}>Refresh leaderboard</Button>
+        </Col>
     </Row>
   </Container>;
   }
@@ -436,6 +446,7 @@ class Header extends React.Component {
                 <Nav.Link onClick={this.props.logout} href="#logout" className="text-white h5">Logout</Nav.Link>
                 {btn}
               </Nav>
+              <span className="h5 mx-3 text-white">Logged in as: {this.props.user}</span>
               <Navbar.Brand onClick={this.handleTaskClick} href="#home" className='text-white border border-white p-2'>Task Manager</Navbar.Brand>
             </Navbar.Collapse>
           </Navbar>;
