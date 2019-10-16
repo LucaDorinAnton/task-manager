@@ -31,7 +31,6 @@ def routes(app):
             title = _request['title']
             body = _request['body']
             important = bool( _request['important'])
-            print(important)
             done = False
             dct = {
                 'owner_token': token,
@@ -44,6 +43,7 @@ def routes(app):
             t = Task.add(dct)
             return jsonify(t.to_dict()), 200
         except Exception as e:
+            raise e
             return jsonify({'e' : e.__str__()}), 500
 
 
@@ -73,6 +73,7 @@ def routes(app):
             response = Task.delete(token)
             return jsonify(response), 200
         except Exception as e:
+            raise e
             return jsonify({
                 'e': e.__str__()
             }), 500

@@ -14,7 +14,6 @@ def routes(app):
         """
         try:
             _request = request.get_json(force=True)
-            print(type(_request))
             if not _request:
                 abort(400)
             p = Person.add(
@@ -22,6 +21,7 @@ def routes(app):
                 str(_request['password']))
             return jsonify(p.to_dict())
         except Exception as e:
+            raise e
             return jsonify({
                 'e': e.__str__()
             }), 500
