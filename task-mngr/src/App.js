@@ -94,7 +94,8 @@ class TopLevelController extends React.Component {
       } else {
         this.setState({
           signup_t_toast: true,
-          p_token: json.token
+          p_token: json.token,
+          user: json.username
         });
       }
     });
