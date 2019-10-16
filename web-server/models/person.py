@@ -98,7 +98,7 @@ class Person(db.Model):
         if not p:
             raise Exception('Person does not exist')
         else:
-            redis_cliente.delete('people')
+            redis_client.delete('people')
             db.session.delete(p)
             db.session.commit()
             return 'Person deleted'
