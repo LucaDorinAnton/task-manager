@@ -1,5 +1,5 @@
 DB_USER='postgres'
-DB_PW='1Ascaad2'
+DB_PW='password'
 DB_HOST='127.0.0.1'
 DB_PORT='5432'
 DB_NAME='taskmngr'
